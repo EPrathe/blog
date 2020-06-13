@@ -31,6 +31,28 @@ app.get('/api/articles/:name', async (req, res) => {
     }, res);
 })
 
+app.get('/api/toDoList', async (req,res)=>{
+    withDB(async (db) =>{
+    const list=await db.collection('toDoList').find({}).toArray();
+    res.status(200).json(list);
+        
+    }, res);
+});
+
+app.post('/api/toDolist/add', async (req,res)=>{
+    const {name, crossed} =req.body;
+    withDB(async (db)=>{
+       await db.collection('toDoList').insertOne({name: name, cross: crossed}, function (error, response){
+        if(error) console.log('error');
+        else console.log("success");
+
+       });
+
+     const result=await db.collection('toDoList').find({}).toArray();
+     res.status(200).json(result);
+    }, res);
+});
+
 app.post('/api/articles/:name/upvote', async (req, res) => {
     withDB(async (db) => {
         const articleName = req.params.name;
